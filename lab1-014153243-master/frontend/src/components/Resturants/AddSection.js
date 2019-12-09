@@ -4,23 +4,9 @@ import { Redirect } from "react-router";
 import { connect } from "react-redux";
 import { addSections } from "../../actions/orderAction";
 import React, { Component } from "react";
-
-function mapStateToProps(store) {
-  return {
-    errMsg: store.order.errMsg,
-    success: store.order.success,
-    err: store.order.err,
-    result: store.order.result,
-    addSecSuccess: store.order.addSecSuccess
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    addSec: data => dispatch(addSections(data))
-  };
-}
-
+import { graphql } from 'react-apollo';
+import * as compose from 'lodash.flowright';
+import { addSectionMutation } from '../../mutation/mutation'
 class AddSection extends Component {
   constructor(props) {
     super(props);
@@ -29,23 +15,31 @@ class AddSection extends Component {
   }
   sectionChangeHandle = e => {
     this.setState({
-      sectionName: e.target.value
+      sectionName: e.target.value,
+      sectionAdded: false
     });
   };
   submitSection = e => {
     e.preventDefault();
-    let rest_email = sessionStorage.getItem("email_idRes");
+    let rest_email = sessionStorage.getItem("email_id");
     // let rest_email = "akshit@gmail.com";
     const data = {
       section_name: this.state.sectionName,
       email_id: rest_email
     };
     console.log("test " + JSON.stringify(data));
-    this.props.addSec(data);
+    this.props.addSectionMutation({
+      variables: {
+        section_name: this.state.sectionName,
+        email_id: rest_email
+      }
+      // refetchQueries: [{ query: getBooksQuery }]
+    });
+    this.setState({ sectionAdded: true })
   };
   render() {
     let dispMsg = "";
-    if (this.props.addSecSuccess === true) {
+    if (this.state.sectionAdded === true) {
       dispMsg = (
         <div class="text-center">
           <p>Section added successfully</p>
@@ -77,7 +71,6 @@ class AddSection extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+export default compose(
+  graphql(addSectionMutation, { name: "addSectionMutation" })
 )(AddSection);

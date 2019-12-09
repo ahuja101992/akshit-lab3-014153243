@@ -4,23 +4,10 @@ import { connect } from "react-redux";
 import "./AddDish.css";
 import axios from "axios";
 import { addDish, getSections } from "../../actions/orderAction";
+import { graphql } from 'react-apollo';
+import * as compose from 'lodash.flowright';
+import { addItemMutation } from '../../mutation/mutation'
 
-function mapStateToProps(store) {
-  return {
-    dishSuccess: store.order.dishSuccess,
-    success: store.order.success,
-    errMsg: store.order.errMsg,
-    sections: store.order.sections,
-    getSecSuccess: store.order.getSecSuccess
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    addDish: data => dispatch(addDish(data)),
-    getSec: data => dispatch(getSections(data))
-  };
-}
 
 class AddDish extends Component {
   constructor(props) {
@@ -48,7 +35,7 @@ class AddDish extends Component {
       email_id: email_id
     };
     // console.log("data" + JSON.stringify(data));
-    this.props.getSec(data);
+    // this.props.getSec(data);
   }
   nameChange = e => {
     this.setState({
@@ -82,7 +69,17 @@ class AddDish extends Component {
       email_id: sessionStorage.getItem("email_idRes")
     };
     console.log(data);
-    this.props.addDish(data);
+    this.props.addItemMutation({
+      variables: {
+        dish_name: this.state.dishName,
+        dish_desc: this.state.dishDesc,
+        type: this.state.type,
+        dish_price: this.state.price,
+        email_id: sessionStorage.getItem("email_id")
+      }
+      // refetchQueries: [{ query: getBooksQuery }]
+    });
+    this.setState({ sectionAdded: true })
     this.setState({ dishAdd: true });
   };
   enableAddImage() {
@@ -163,7 +160,7 @@ class AddDish extends Component {
               <h6>Menu Section</h6>
 
               <select class="form-control" required onChange={this.typeChange}>
-                <option></option>
+                <option>Test</option>
                 {currSections}
               </select>
 
@@ -187,7 +184,6 @@ class AddDish extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+export default compose(
+  graphql(addItemMutation, { name: "addItemMutation" })
 )(AddDish);

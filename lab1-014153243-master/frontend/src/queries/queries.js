@@ -39,7 +39,7 @@ const getBuyer = gql`
   }
 `;
 const sections = gql`
-  query getSection($email_id: String,section_name:String ) {
+  query getSection($email_id: String,$section_name:String ) {
     getSection(email_id: $email_id,section_name: $section_name  ) {
         email_id,
         section_name
