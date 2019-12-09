@@ -64,18 +64,20 @@ const BuyerType = new GraphQLObjectType({
 });
 
 const ItemType = new GraphQLObjectType({
-    name: 'User',
+    name: 'Item',
     fields: () => ({
         email_id: { type: GraphQLString },
-        first_name: { type: GraphQLString },
-        last_name: { type: GraphQLString },
-        password: { type: GraphQLString }
+        dish_name: { type: GraphQLString },
+        section_name: { type: GraphQLString },
+        dish_desc: { type: GraphQLString },
+        dish_price: { type: GraphQLString }
     })
 });
 
 const SectionType = new GraphQLObjectType({
     name: 'Section',
     fields: () => ({
+        email_id: { type: GraphQLString },
         section_name: { type: GraphQLString }
     })
 });
@@ -269,6 +271,34 @@ const RootQuery = new GraphQLObjectType({
                 })
             }
         },
+        items: {
+            type: new GraphQLList(ItemType),
+            resolve(parent, args) {
+                return items;
+            }
+        },
+        item: {
+            type: ItemType,
+            args: { dish_name: { type: GraphQLString }, email_id: { type: GraphQLString } },
+            resolve(parent, args) {
+
+                return new Promise((resolve, reject) => {
+                    Owner.find({ "sections.rest_dish.dish_name": args.dish_name, email_id: args.email_id })
+                        .then(Item => {
+                            let response = null;
+                            console.log("found", JSON.stringify(Item));
+                            if (Item.length === 0) {
+                                reject("not found");
+                            } else {
+                                const resItem = { email_id: Item[0].email_id, first_name: Item[0].first_name, rest_name: Item[0].resturant_name }
+                                console.log("found 123", resItem);
+                                resolve(resItem);
+                            }
+
+                        });
+                })
+            }
+        },
     }
 });
 
@@ -387,17 +417,52 @@ const Mutation = new GraphQLObjectType({
             },
             resolve(parent, args) {
                 const sec = new Owner({
-                    section_name: msg.body.section_name
+                    section_name: args.section_name
                 });
                 return new Promise((resolve, reject) => {
                     Owner.findOneAndUpdate(
                         { email_id: email_id },
                         {
                             $push: {
-                                sections: { section_name: msg.body.section_name }
+                                sections: { section_name: args.section_name }
                             }
                         },
                         { upsert: true }
+                    )
+                })
+            }
+        },
+        addItem: {
+            type: ItemType,
+            args: {
+                dish_name: { type: GraphQLString },
+                email_id: { type: GraphQLString },
+                dish_desc: { type: GraphQLString },
+                dish_price: { type: GraphQLString },
+                section_name: { type: GraphQLString }
+
+            },
+            resolve(parent, args) {
+                const dish = new Owner({
+                    dish_name: args.dish_name,
+                    dish_desc: args.dish_desc,
+                    dish_price: args.dish_price
+                });
+                return new Promise((resolve, reject) => {
+                    Owner.findOneAndUpdate(
+                        {
+                            email_id: email_id,
+                            "sections.section_name": args.section_name
+                        },
+                        {
+                            $push: {
+                                "sections.$.rest_dish": {
+                                    dish_name: args.dish_name,
+                                    dish_desc: args.dish_desc,
+                                    dish_price: args.dish_price
+                                }
+                            }
+                        }
                     )
                 })
             }
