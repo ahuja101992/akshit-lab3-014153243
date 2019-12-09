@@ -8,6 +8,15 @@ const getUserQuery = gql`
     }
   }
 `;
+const getBuyerQuery = gql`
+  query buyer($email_id: String, $password: String) {
+    buyer(email_id: $email_id, password: $password) {
+        email_id,
+        rest_name,
+        emeil_id
+    }
+  }
+`;
 
 const getBooksQuery = gql`
     {
@@ -18,4 +27,4 @@ const getBooksQuery = gql`
     }
 `;
 
-export { getUserQuery, getBooksQuery };
+export { getUserQuery, getBooksQuery, getBuyerQuery };

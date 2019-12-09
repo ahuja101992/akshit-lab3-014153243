@@ -1,6 +1,7 @@
 const graphql = require('graphql');
 const _ = require('lodash');
 const userScheme = require('../models/UserSchema');
+const Owner = require('../models/OwnerSchema');
 var mongoose = require("mongoose");
 
 const {
@@ -46,6 +47,19 @@ const UserType = new GraphQLObjectType({
         first_name: { type: GraphQLString },
         last_name: { type: GraphQLString },
         password: { type: GraphQLString }
+    })
+});
+
+
+const BuyerType = new GraphQLObjectType({
+    name: 'buyer',
+    fields: () => ({
+        email_id: { type: GraphQLString },
+        first_name: { type: GraphQLString },
+        last_name: { type: GraphQLString },
+        rest_name: { type: GraphQLString },
+        phone: { type: GraphQLString },
+        rest_zip: { type: GraphQLString }
     })
 });
 
@@ -128,10 +142,6 @@ const RootQuery = new GraphQLObjectType({
 
                         });
                 })
-
-
-
-
             }
         },
         users: {
@@ -140,6 +150,34 @@ const RootQuery = new GraphQLObjectType({
                 return users;
             }
         },
+        buyers: {
+            type: new GraphQLList(BuyerType),
+            resolve(parent, args) {
+                return buyers;
+            }
+        },
+        buyer: {
+            type: BuyerType,
+            args: { email_id: { type: GraphQLString }, password: { type: GraphQLString } },
+            resolve(parent, args) {
+
+                return new Promise((resolve, reject) => {
+                    Owner.find({ email_id: args.email_id, password: args.password })
+                        .then(owner => {
+                            let response = null;
+                            console.log("found", JSON.stringify(owner));
+                            if (owner.length === 0) {
+                                reject("not found");
+                            } else {
+                                const retOwner = { email_id: owner[0].email_id, first_name: owner[0].first_name }
+                                console.log("found", retOwner);
+                                resolve(retOwner);
+                            }
+
+                        });
+                })
+            }
+        }
     }
 });
 
@@ -215,6 +253,37 @@ const Mutation = new GraphQLObjectType({
                             resolve(user)
                         }
 
+                    })
+                })
+            }
+        },
+        addbuyer: {
+            type: BuyerType,
+            args: {
+                email_id: { type: GraphQLString },
+                first_name: { type: GraphQLString },
+                last_name: { type: GraphQLString },
+                rest_zip: { type: GraphQLString },
+                rest_name: { type: GraphQLString },
+                phone: { type: GraphQLString }
+            },
+            resolve(parent, args) {
+
+                const owner = new Owner({
+                    first_name: args.first_name,
+                    last_name: args.last_name,
+                    email_id: args.email_id,
+                    rest_zip: args.rest_zip,
+                    rest_name: args.rest_name,
+                    phone: args.phone
+                });
+                return new Promise((resolve, reject) => {
+                    owner.save((err, user) => {
+                        let resp = null;
+                        if (err) reject(err)
+                        else {
+                            resolve(owner)
+                        }
                     })
                 })
             }

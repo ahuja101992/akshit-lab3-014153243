@@ -5,24 +5,18 @@ import axios from "axios";
 import cookie from "react-cookies";
 import { connect } from "react-redux";
 import { sign_in_res } from "../../actions/loginActions";
-
-function mapStateToProps(store) {
-  return {
-    errMsg: store.login.errMsg,
-    success: store.login.success,
-    authFlag: store.login.authFlag
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    sign_in: data => dispatch(sign_in_res(data))
-  };
-}
+import gql from 'graphql-tag';
+import { getBuyerQuery } from '../../queries/queries';
+import { graphql } from 'react-apollo';
+import * as compose from 'lodash.flowright';
 
 class ResLogin extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      login: false,
+      errMsg: ""
+    }
     this.loginResturant = this.loginResturant.bind(this);
   }
   loginResturant(e) {
@@ -33,22 +27,32 @@ class ResLogin extends Component {
       username: formdata.getAll("username")[0],
       password: formdata.getAll("password")[0]
     };
-    this.props.sign_in(data);
+    this.props.client.query({
+      query: getBuyerQuery,
+      variables: {
+        email_id: formdata.getAll("username")[0],
+        password: formdata.getAll("password")[0]
+      },
+    }).then((res) => {
+      console.log("signInBuyer res", res)
+      this.setState({ login: true });
+      sessionStorage.setItem('name', res.data.user.first_name);
+      sessionStorage.setItem('email_id', res.data.user.email_id);
+
+    }).catch(err => { console.log("invalid user", err); this.setState({ errMsg: "Invalid User" }) });
   }
 
   render() {
     var redirectVar, dispMsg;
-    if (this.props.authFlag === true) {
+    if (this.state.login === true) {
       redirectVar = <Redirect to="/homeR" />;
       cookie.save("cookieRes", {
         maxAge: 900000,
         httpOnly: false,
         path: "/"
       });
-    } else {
-      redirectVar = <Redirect to="/reslogin" />;
     }
-    if (this.props.authFlag == false) {
+    if (this.state.errMsg === "Invalid User") {
       console.log("got this");
       dispMsg = (
         <div class="text-center">
@@ -123,7 +127,4 @@ class ResLogin extends Component {
     );
   }
 }
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ResLogin);
+export default withApollo(Login)

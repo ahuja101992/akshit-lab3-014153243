@@ -51,7 +51,9 @@ class Login extends Component {
     }).then((res) => {
       console.log("signInBuyer res", res)
       this.setState({ login: true });
-      // this.
+      sessionStorage.setItem('name', res.data.user.first_name);
+      sessionStorage.setItem('email_id', res.data.user.email_id);
+
     }).catch(err => { console.log("invalid user", err); this.setState({ errMsg: "Invalid User" }) });
   }
   render() {
