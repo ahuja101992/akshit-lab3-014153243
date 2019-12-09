@@ -64,4 +64,4 @@ const getBooksQuery = gql`
     }
 `;
 
-export { getUserQuery, getBooksQuery, getBuyerQuery, getBuyer, getUser };
+export { getUserQuery, getBooksQuery, getBuyerQuery, getBuyer, getUser, sections, items };
