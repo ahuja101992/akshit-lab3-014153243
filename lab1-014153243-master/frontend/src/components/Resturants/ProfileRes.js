@@ -7,7 +7,7 @@ import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import { Query, withApollo } from 'react-apollo';
 import gql from 'graphql-tag';
-import { getUser } from '../queries/queries';
+import { getBuyer } from '../../queries/queries';
 import { graphql } from 'react-apollo';
 import * as compose from 'lodash.flowright';
 
