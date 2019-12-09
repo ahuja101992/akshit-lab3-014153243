@@ -169,7 +169,7 @@ const RootQuery = new GraphQLObjectType({
                             if (owner.length === 0) {
                                 reject("not found");
                             } else {
-                                const retOwner = { email_id: owner[0].email_id, first_name: owner[0].first_name }
+                                const retOwner = { email_id: owner[0].email_id, first_name: owner[0].first_name, rest_name: owner[0].rest_name }
                                 console.log("found", retOwner);
                                 resolve(retOwner);
                             }
