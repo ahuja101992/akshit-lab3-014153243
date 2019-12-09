@@ -170,7 +170,7 @@ const RootQuery = new GraphQLObjectType({
                                 reject("not found");
                             } else {
                                 const retOwner = { email_id: owner[0].email_id, first_name: owner[0].first_name, rest_name: owner[0].resturant_name }
-                                console.log("found", retOwner);
+                                console.log("found 123", retOwner);
                                 resolve(retOwner);
                             }
 
@@ -184,15 +184,15 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent, args) {
 
                 return new Promise((resolve, reject) => {
-                    Owner.find({ email_id: args.email_id, password: args.password })
+                    Owner.find({ email_id: args.email_id })
                         .then(owner => {
                             let response = null;
                             console.log("found", JSON.stringify(owner));
                             if (owner.length === 0) {
                                 reject("not found");
                             } else {
-                                const retOwner = { email_id: owner[0].email_id, first_name: owner[0].first_name, rest_name: owner[0].resturant_name, rest_zip: owner[0].resturant_zipcode, phone_num: owner[0].phone_num }
-                                console.log("found", retOwner);
+                                const retOwner = { email_id: owner[0].email_id, first_name: owner[0].first_name, rest_name: owner[0].resturant_name, rest_zip: owner[0].resturant_zipcode, phone_num: owner[0].phone_num, last_name: owner[0].last_name }
+                                console.log("found123", retOwner);
                                 resolve(retOwner);
                             }
 
@@ -206,15 +206,15 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent, args) {
 
                 return new Promise((resolve, reject) => {
-                    User.find({ email_id: args.email_id, password: args.password })
+                    User.find({ email_id: args.email_id })
                         .then(user => {
                             let response = null;
                             console.log("found", JSON.stringify(user));
                             if (user.length === 0) {
                                 reject("not found");
                             } else {
-                                const retUser = { email_id: user[0].email_id, first_name: user[0].first_name, last_name: user[0].last_name }
-                                console.log("found", retUser);
+                                const retUser = { email_id: user[0].email_id, first_name: user[0].first_name, last_name: user[0].last_name, phone_num: user[0].phone_num }
+                                console.log("found 123", retUser);
                                 resolve(retUser);
                             }
 
