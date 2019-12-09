@@ -63,6 +63,23 @@ const BuyerType = new GraphQLObjectType({
     })
 });
 
+const ItemType = new GraphQLObjectType({
+    name: 'User',
+    fields: () => ({
+        email_id: { type: GraphQLString },
+        first_name: { type: GraphQLString },
+        last_name: { type: GraphQLString },
+        password: { type: GraphQLString }
+    })
+});
+
+const SectionType = new GraphQLObjectType({
+    name: 'Section',
+    fields: () => ({
+        section_name: { type: GraphQLString }
+    })
+});
+
 const BookType = new GraphQLObjectType({
     name: 'Book',
     fields: () => ({
@@ -77,6 +94,8 @@ const BookType = new GraphQLObjectType({
         }
     })
 });
+
+
 
 const AuthorType = new GraphQLObjectType({
     name: 'Author',
@@ -221,7 +240,35 @@ const RootQuery = new GraphQLObjectType({
                         });
                 })
             }
-        }
+        },
+        sections: {
+            type: new GraphQLList(SectionType),
+            resolve(parent, args) {
+                return sections;
+            }
+        },
+        section: {
+            type: SectionType,
+            args: { section_name: { type: GraphQLString } },
+            resolve(parent, args) {
+
+                return new Promise((resolve, reject) => {
+                    Owner.find({ "sections.$.section_name": args.section_name })
+                        .then(section => {
+                            let response = null;
+                            console.log("found", JSON.stringify(section));
+                            if (section.length === 0) {
+                                reject("not found");
+                            } else {
+                                const resSection = { email_id: section[0].email_id, first_name: section[0].first_name, rest_name: section[0].resturant_name }
+                                console.log("found 123", resSection);
+                                resolve(resSection);
+                            }
+
+                        });
+                })
+            }
+        },
     }
 });
 
