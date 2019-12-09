@@ -249,11 +249,11 @@ const RootQuery = new GraphQLObjectType({
         },
         section: {
             type: SectionType,
-            args: { section_name: { type: GraphQLString } },
+            args: { section_name: { type: GraphQLString }, email_id: { type: GraphQLString } },
             resolve(parent, args) {
 
                 return new Promise((resolve, reject) => {
-                    Owner.find({ "sections.$.section_name": args.section_name })
+                    Owner.find({ "sections.$.section_name": args.section_name, email_id: args.email_id })
                         .then(section => {
                             let response = null;
                             console.log("found", JSON.stringify(section));
@@ -377,6 +377,28 @@ const Mutation = new GraphQLObjectType({
                             resolve(owner)
                         }
                     })
+                })
+            }
+        },
+        addSection: {
+            type: SectionType,
+            args: {
+                section_name: { type: GraphQLString }, email_id: { type: GraphQLString }
+            },
+            resolve(parent, args) {
+                const sec = new Owner({
+                    section_name: msg.body.section_name
+                });
+                return new Promise((resolve, reject) => {
+                    Owner.findOneAndUpdate(
+                        { email_id: email_id },
+                        {
+                            $push: {
+                                sections: { section_name: msg.body.section_name }
+                            }
+                        },
+                        { upsert: true }
+                    )
                 })
             }
         }
