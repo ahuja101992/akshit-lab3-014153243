@@ -38,6 +38,22 @@ const getBuyer = gql`
     }
   }
 `;
+const sections = gql`
+  query getSection($email_id: String,section_name:String ) {
+    getSection(email_id: $email_id,section_name: $section_name  ) {
+        email_id,
+        section_name
+    }
+  }
+`;
+const items = gql`
+  query getItem($dish_name: String, $email_id:String) {
+    getItem(email_id: $email_id,dish_name: $dish_name  ) {
+        email_id,
+        dish_name
+    }
+  }
+`;
 
 const getBooksQuery = gql`
     {
