@@ -3,13 +3,14 @@ import "./../login.css";
 import { Redirect } from "react-router-dom";
 import axios from "axios";
 import cookie from "react-cookies";
-import { connect } from "react-redux";
-import { sign_in_res } from "../../actions/loginActions";
+// import { connect } from "react-redux";
+// import { sign_in_res } from "../../actions/loginActions";
 import gql from 'graphql-tag';
+
 import { getBuyerQuery } from '../../queries/queries';
 import { graphql } from 'react-apollo';
 import * as compose from 'lodash.flowright';
-
+import { Query, withApollo } from 'react-apollo';
 class ResLogin extends Component {
   constructor(props) {
     super(props);
@@ -36,8 +37,8 @@ class ResLogin extends Component {
     }).then((res) => {
       console.log("signInBuyer res", res)
       this.setState({ login: true });
-      sessionStorage.setItem('name', res.data.user.first_name);
-      sessionStorage.setItem('email_id', res.data.user.email_id);
+      sessionStorage.setItem('name', res.data.buyer.first_name);
+      sessionStorage.setItem('email_id', res.data.buyer.email_id);
 
     }).catch(err => { console.log("invalid user", err); this.setState({ errMsg: "Invalid User" }) });
   }
@@ -127,4 +128,4 @@ class ResLogin extends Component {
     );
   }
 }
-export default withApollo(Login)
+export default withApollo(ResLogin)

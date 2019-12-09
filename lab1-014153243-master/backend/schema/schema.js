@@ -135,7 +135,7 @@ const RootQuery = new GraphQLObjectType({
                             if (user.length === 0) {
                                 reject("not found");
                             } else {
-                                const retUser = { email_id: user[0].email_id, first_name: user[0].first_name }
+                                const retUser = { email_id: user[0].email_id, first_name: user[0].first_name, last_name: user[0].last_name }
                                 console.log("found", retUser);
                                 resolve(retUser);
                             }
@@ -169,9 +169,53 @@ const RootQuery = new GraphQLObjectType({
                             if (owner.length === 0) {
                                 reject("not found");
                             } else {
-                                const retOwner = { email_id: owner[0].email_id, first_name: owner[0].first_name, rest_name: owner[0].rest_name }
+                                const retOwner = { email_id: owner[0].email_id, first_name: owner[0].first_name, rest_name: owner[0].resturant_name }
                                 console.log("found", retOwner);
                                 resolve(retOwner);
+                            }
+
+                        });
+                })
+            }
+        },
+        getBuyer: {
+            type: BuyerType,
+            args: { email_id: { type: GraphQLString } },
+            resolve(parent, args) {
+
+                return new Promise((resolve, reject) => {
+                    Owner.find({ email_id: args.email_id, password: args.password })
+                        .then(owner => {
+                            let response = null;
+                            console.log("found", JSON.stringify(owner));
+                            if (owner.length === 0) {
+                                reject("not found");
+                            } else {
+                                const retOwner = { email_id: owner[0].email_id, first_name: owner[0].first_name, rest_name: owner[0].resturant_name, rest_zip: owner[0].resturant_zipcode, phone_num: owner[0].phone_num }
+                                console.log("found", retOwner);
+                                resolve(retOwner);
+                            }
+
+                        });
+                })
+            }
+        },
+        getUser: {
+            type: UserType,
+            args: { email_id: { type: GraphQLString } },
+            resolve(parent, args) {
+
+                return new Promise((resolve, reject) => {
+                    User.find({ email_id: args.email_id, password: args.password })
+                        .then(user => {
+                            let response = null;
+                            console.log("found", JSON.stringify(user));
+                            if (user.length === 0) {
+                                reject("not found");
+                            } else {
+                                const retUser = { email_id: user[0].email_id, first_name: user[0].first_name, last_name: user[0].last_name }
+                                console.log("found", retUser);
+                                resolve(retUser);
                             }
 
                         });
@@ -257,7 +301,7 @@ const Mutation = new GraphQLObjectType({
                 })
             }
         },
-        addbuyer: {
+        addBuyer: {
             type: BuyerType,
             args: {
                 email_id: { type: GraphQLString },
@@ -273,9 +317,10 @@ const Mutation = new GraphQLObjectType({
                     first_name: args.first_name,
                     last_name: args.last_name,
                     email_id: args.email_id,
-                    rest_zip: args.rest_zip,
-                    rest_name: args.rest_name,
-                    phone: args.phone
+                    resturant_zipcode: args.rest_zip,
+                    resturant_name: args.rest_name,
+                    phone: args.phone,
+                    password: args.email_id
                 });
                 return new Promise((resolve, reject) => {
                     owner.save((err, user) => {

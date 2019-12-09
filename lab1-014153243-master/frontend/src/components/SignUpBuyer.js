@@ -8,32 +8,9 @@ import axios from "axios";
 import "./login.css";
 import { connect } from "react-redux";
 import { addUserMutation } from '../mutation/mutation'
-
-// function mapDispatchToProps(dispatch) {
-//   return {
-//     toLogin: data => dispatch(toLogin(data)),
-//     sign_in: data => dispatch(sign_in(data))
-//   };
-// }
-
-// function mapStateToProps(store) {
-//   return {
-//     errMsg: store.login.errMsg,
-//     success: store.login.authFlag,
-//     toLoginPage: store.login.toLogin
-//   };
-// }
-
 class SignUpBuyer extends Component {
   constructor(props) {
     super(props);
-    // this.state = {
-    //   toLoginPage: false,
-    //   f_name: "",
-    //   l_name: "",
-    //   email_id: "",
-    //   password: ""
-    // };
     this.signIn = this.signIn.bind(this);
     this.signupBuy = this.signupBuy.bind(this);
     this.successmessage = this.successmessage.bind(this);
