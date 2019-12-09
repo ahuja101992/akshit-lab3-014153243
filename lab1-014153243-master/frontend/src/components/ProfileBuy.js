@@ -109,7 +109,7 @@ class Profilebuy extends Component {
                       <h5>
                         {this.state.first_name + " " + this.state.last_name}
                       </h5>
-                      <h7>Registered Email: {this.props.email_id}</h7>
+                      <h7>Registered Email: {this.state.email_id}</h7>
                       <h3>Profile</h3>
                     </div>
                   </div>

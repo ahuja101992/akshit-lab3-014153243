@@ -191,7 +191,7 @@ const RootQuery = new GraphQLObjectType({
                             if (owner.length === 0) {
                                 reject("not found");
                             } else {
-                                const retOwner = { email_id: owner[0].email_id, first_name: owner[0].first_name, rest_name: owner[0].resturant_name, rest_zip: owner[0].resturant_zipcode, phone_num: owner[0].phone_num, last_name: owner[0].last_name }
+                                const retOwner = { email_id: owner[0].email_id, first_name: owner[0].first_name, rest_name: owner[0].resturant_name, rest_zip: owner[0].resturant_zipcode, phone_num: owner[0].phone_num, last_name: owner[0].last_name, profile_image: user[0].profile_image }
                                 console.log("found123", retOwner);
                                 resolve(retOwner);
                             }
@@ -213,7 +213,7 @@ const RootQuery = new GraphQLObjectType({
                             if (user.length === 0) {
                                 reject("not found");
                             } else {
-                                const retUser = { email_id: user[0].email_id, first_name: user[0].first_name, last_name: user[0].last_name, phone_num: user[0].phone_num }
+                                const retUser = { email_id: user[0].email_id, first_name: user[0].first_name, last_name: user[0].last_name, phone_num: user[0].phone_num, profile_image: user[0].profile_image }
                                 console.log("found 123", retUser);
                                 resolve(retUser);
                             }

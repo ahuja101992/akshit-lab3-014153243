@@ -5,33 +5,23 @@ import { connect } from "react-redux";
 import { toProfileedit, getResProfile } from "../../actions/loginActions";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
-function mapStateToProps(store) {
-  return {
-    errMsg: store.login.errMsg,
-    authFlag: store.login.authFlag,
-    toSignup: store.login.toSignup,
-    first_name: store.login.first_name,
-    last_name: store.login.last_name,
-    email_id: store.login.email_id,
-    phone_num: store.login.phone_num,
-    toProfilePage: store.login.toProfileEdit,
-    rest_name: store.login.rest_name,
-    rest_zip: store.login.rest_zip,
-    cuisine: store.login.cuisine,
-    profile_image: store.login.profile_image
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    getResProfile: data => dispatch(getResProfile(data)),
-    toProfileEditPage: data => dispatch(toProfileedit())
-  };
-}
+import { Query, withApollo } from 'react-apollo';
+import gql from 'graphql-tag';
+import { getUser } from '../queries/queries';
+import { graphql } from 'react-apollo';
+import * as compose from 'lodash.flowright';
 
 class Profileres extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      first_name: null,
+      last_name: null,
+      phone_num: null,
+      profile_image: null,
+      rest_zip: null,
+      rest_name: null
+    }
     // this.getProfile = this.getProfile.bind(this);
   }
   componentDidMount() {
@@ -41,7 +31,27 @@ class Profileres extends Component {
       email_id: email
     };
     console.log("data    " + JSON.stringify(data));
-    this.props.getResProfile(data);
+    this.props.client.query({
+      query: getBuyer,
+      variables: {
+        email_id: sessionStorage.getItem("email_id")
+      },
+    }).then((res) => {
+      console.log("get buyer", res);
+      this.setState({
+        phone_num: res.data.user.phone_num,
+        first_name: res.data.user.first_name,
+        last_name: res.data.user.last_name,
+        profile_image: res.data.user.profile_image,
+        rest_name: res.data.user.rest_name,
+        rest_zip: res.data.user.rest_zip,
+        phone_num: res.data.user.phone_num
+      })
+      // this.setState({ login: true });
+      // sessionStorage.setItem('name', res.data.user.first_name);
+      // sessionStorage.setItem('email_id', res.data.user.email_id);
+
+    }).catch(err => { console.log("invalid user", err); this.setState({ errMsg: "Invalid User" }) });
   }
 
   gotoEditProfile = e => {
@@ -92,8 +102,8 @@ class Profileres extends Component {
                   <div>
                     <img
                       src={
-                        this.props.profile_image
-                          ? this.props.profile_image
+                        this.state.profile_image
+                          ? this.state.profile_image
                           : require("./profilepic.png")
                       }
                       class="rounded profile-image"
@@ -102,8 +112,8 @@ class Profileres extends Component {
                   </div>
                   <div class="col-md-6">
                     <div class="profile-head">
-                      <h5>{this.props.rest_name}</h5>
-                      <h7>Registered Email: {this.props.email_id}</h7>
+                      <h5>{this.state.rest_name}</h5>
+                      <h7>Registered Email: {this.state.email_id}</h7>
                       <h3>Profile</h3>
                     </div>
                   </div>
@@ -134,9 +144,9 @@ class Profileres extends Component {
                           </div>
                           <div class="col-md-6">
                             <p>
-                              {this.props.first_name +
+                              {this.state.first_name +
                                 " " +
-                                this.props.last_name}
+                                this.state.last_name}
                             </p>
                           </div>
                         </div>
@@ -145,7 +155,7 @@ class Profileres extends Component {
                             <label>Email</label>
                           </div>
                           <div class="col-md-6">
-                            <p>{this.props.email_id}</p>
+                            <p>{this.state.email_id}</p>
                           </div>
                         </div>
                         <div class="row">
@@ -153,7 +163,7 @@ class Profileres extends Component {
                             <label>Phone Number</label>
                           </div>
                           <div class="col-md-6">
-                            <p>{this.props.phone_num}</p>
+                            <p>{this.state.phone_num}</p>
                           </div>
                         </div>
                         <div class="row">
@@ -161,7 +171,7 @@ class Profileres extends Component {
                             <label>Resturant Name</label>
                           </div>
                           <div class="col-md-6">
-                            <p>{this.props.rest_name}</p>
+                            <p>{this.state.rest_name}</p>
                           </div>
                         </div>
                         <div class="row">
@@ -169,7 +179,7 @@ class Profileres extends Component {
                             <label>Resturant Zip Code</label>
                           </div>
                           <div class="col-md-6">
-                            <p>{this.props.rest_zip}</p>
+                            <p>{this.state.rest_zip}</p>
                           </div>
                         </div>
                         <div class="row">
@@ -177,7 +187,7 @@ class Profileres extends Component {
                             <label>Cuisine</label>
                           </div>
                           <div class="col-md-6">
-                            <p>{this.props.cuisine}</p>
+                            <p>{this.state.cuisine}</p>
                           </div>
                         </div>
                       </div>
@@ -192,8 +202,5 @@ class Profileres extends Component {
     );
   }
 }
+export default withApollo(Profileres);
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Profileres);
