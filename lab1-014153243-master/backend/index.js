@@ -16,7 +16,7 @@ app.use(function (req, res, next) {
     next();
 });
 const CONNECTION_URL =
-    "mongodb+srv://root:root@grubhub-b4ptc.mongodb.net/grubhub?retryWrites=true&w=majority";
+    "mongodb+srv://****:****@grubhub-b4ptc.mongodb.net/grubhub?retryWrites=true&w=majority";
 
 
 mongoose.set("useCreateIndex", true);
